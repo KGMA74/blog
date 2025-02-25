@@ -1,0 +1,164 @@
+# version: '3.8'
+
+#  services:
+#    db:
+#      image: postgres:latest
+#      volumes:
+#        - pg_data:/var/lib/postgresql/data:rw
+#      environment:
+#        POSTGRES_USER: blog
+#        POSTGRES_PASSWORD: 7488
+#        POSTGRES_DB: blog_db
+#      networks:
+#        - BlogNetwork
+
+#    api:
+#      build:
+#        context: ./backend
+#      environment:
+#        DATABASE_URL: postgres://blog:7488@db:5432/blog_db
+#        VIRTUAL_HOST: api.votredomaine.com
+#        LETSENCRYPT_HOST: api.votredomaine.com
+#        LETSENCRYPT_EMAIL: votre_email@domaine.com
+#      networks:
+#        - BlogNetwork
+#      depends_on:
+#        - db
+
+#    frontend:
+#      build:
+#        context: ./frontend
+#      environment:
+#        VIRTUAL_HOST: www.votredomaine.com
+#        LETSENCRYPT_HOST: www.votredomaine.com
+#        LETSENCRYPT_EMAIL: votre_email@domaine.com
+#      networks:
+#        - BlogNetwork
+
+#    nginx-proxy:
+#      image: jwilder/nginx-proxy
+#      container_name: nginx-proxy
+#      ports:
+#        - '80:80'
+#        - '443:443'
+#      volumes:
+#        - /var/run/docker.sock:/tmp/docker.sock:ro
+#        - ./certs:/etc/nginx/certs:ro
+#        - ./vhost.d:/etc/nginx/vhost.d
+#        - ./html:/usr/share/nginx/html
+#      networks:
+#        - BlogNetwork
+#      restart: always
+
+#    letsencrypt:
+#      image: jrcs/letsencrypt-nginx-proxy-companion
+#      container_name: letsencrypt
+#      environment:
+#        NGINX_PROXY_CONTAINER: nginx-proxy
+#      volumes:
+#        - /var/run/docker.sock:/var/run/docker.sock:ro
+#        - ./certs:/etc/nginx/certs:rw
+#        - ./vhost.d:/etc/nginx/vhost.d
+#        - ./html:/usr/share/nginx/html
+#      networks:
+#        - BlogNetwork
+#      restart: always
+
+#  networks:
+#    BlogNetwork:
+#      driver: bridge
+
+#  volumes:
+#    pg_data:
+
+
+
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.5
+    container_name: traefik
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      - --certificatesresolvers.myresolver.acme.email=marmelkambou2@gmail.com
+      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Dashboard Traefik
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - BlogNetwork
+
+  backend:
+    container_name: blog_backend
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/Backend
+      - .backend/media:/media  # Monte le répertoire média
+      # - .backend/static:/static
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://blog:7488@db:5432/blog_db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`blog.local`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+    networks:
+      - BlogNetwork
+
+  frontend:
+    container_name: blog_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`blog.local`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+    networks:
+      - BlogNetwork
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx-setup.conf:/etc/nginx/nginx.conf
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`blog.local`)"
+      - "traefik.http.routers.nginx.entrypoints=websecure"
+      - "traefik.http.routers.nginx.tls.certresolver=myresolver"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - BlogNetwork
+
+  db:
+    image: postgres:latest
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: blog
+      POSTGRES_PASSWORD: 7488
+      POSTGRES_DB: blog_db
+    networks:
+      - BlogNetwork
+
+volumes:
+  pg_data:
+
+networks:
+  BlogNetwork:
+    driver: bridge
