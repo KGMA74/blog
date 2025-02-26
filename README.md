@@ -68,6 +68,3 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 
 ## Common Issues
 Listez ici les problèmes courants rencontrés par les utilisateurs et comment les résoudre.
-
-## License
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
