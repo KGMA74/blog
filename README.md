@@ -62,6 +62,7 @@ En production, vous pouvez utiliser l’adresse publique du VPS ou un domaine. P
 - PostgreSQL et Python n'ont pas besoin d'être installés localement, tout est géré par les conteneurs.
 - L’application est accessible depuis le réseau local sans configuration supplémentaire.
 - Dernière remarque : J’ai volontairement inclus le fichier `.env` dans le dépôt pour simplifier les tests en local, en étant conscient des risques de sécurité.
+- les utilisateurs deja creer sont: (user@gmail.com , 7488) un user lambda et (admin@admin@gmail.com, 7488) un admin user
 
 ## Contributing
 Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou ouvrir une issue pour toute suggestion d'amélioration.
