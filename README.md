@@ -1,76 +1,73 @@
-Blog - Projet Full Stack
+# Blog - Projet Full Stack
 
-📌 Introduction
+## Table of Contents
+- [Introduction](#introduction)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the Project Locally](#running-the-project-locally)
+- [Database Configuration](#database-configuration)
+- [Production Deployment](#production-deployment)
+- [Additional Notes](#additional-notes)
+- [Contributing](#contributing)
+- [Common Issues](#common-issues)
+- [License](#license)
 
-Ce projet est une plateforme de blog développée avec Django pour le backend et Next.js pour le frontend. Il est conteneurisé avec Docker et Docker Compose pour simplifier le déploiement et garantir une compatibilité entre les environnements.
+## Introduction
+Ce projet est une plateforme de blog développée avec Django pour le backend et Next.js pour le frontend. Il est conteneurisé avec Docker et Docker Compose pour simplifier le déploiement et garantir une configuration homogène.
 
-🏗️ Architecture
+## Architecture
+- **Backend**: Django (API REST avec DRF, gestion des utilisateurs avec Djoser)
+- **Frontend**: Next.js avec Tailwind CSS
+- **Base de données**: PostgreSQL (conteneurisé dans Docker)
+- **Reverse Proxy & Distribution des images**: Nginx
+- **Authentification**: Basée sur les cookies pour éviter les attaques XSS
+- **Stockage des fichiers**: Géré via Django et distribué par Nginx
+- **Sécurité**: HTTPS en production avec Let's Encrypt
 
-Backend : Django (API REST avec DRF, gestion des utilisateurs avec Djoser)
-
-Frontend : Next.js avec Tailwind CSS
-
-Base de données : PostgreSQL (conteneurisé dans Docker)
-
-Reverse Proxy & Distribution des images : Nginx
-
-Authentification : Basée sur les cookies pour éviter les attaques XSS
-
-Stockage des fichiers : Géré via Django et distribué par Nginx
-
-Sécurité : HTTPS en production avec Let's Encrypt
-
-🚀 Lancer le projet en local
-
-🔧 Prérequis
-
+## Prerequisites
 Docker et Docker Compose doivent être installés sur votre machine.
 
-📥 Installation et démarrage
+## Installation
+1. Cloner le dépôt
+    ```sh
+    git clone https://github.com/KGMA74/blog.git
+    cd blog
+    ```
+2. Configurer les variables d'environnement
+    Un fichier `.env` est déjà fourni à la racine du projet. Important : L'adresse IP de votre machine doit être renseignée dans `.env` (voir l'exemple présent dans le fichier).
 
-Cloner le dépôt
+3. Lancer les conteneurs
+    ```sh
+    docker-compose up --build -d
+    ```
 
-git clone https://github.com/KGMA74/blog.git
-cd blog
+## Running the Project Locally
+L'application sera automatiquement disponible sur le réseau local à l'adresse suivante : [https://192.168.X.X](https://192.168.X.X) (Remplacez 192.168.X.X par l'adresse IP de votre machine.)
+Note: Le certificat SSL est auto-signé, donc votre navigateur peut afficher un avertissement. Il suffit d'accepter l'exception pour continuer.
 
-Configurer les variables d'environnement
+## Database Configuration
+- Si `DEBUG=False` dans le fichier `.env`, Django utilisera PostgreSQL.
+- PostgreSQL est automatiquement configuré dans Docker.
+- Attention : Si vous modifiez `DEBUG=False`, vous devez rebuild l’image Docker avec :
+    ```sh
+    docker-compose up --build -d
+    ```
 
-Un fichier .env est déjà fourni à la racine du projet.
+## Production Deployment
+En production, vous pouvez utiliser l’adresse publique du VPS ou un domaine. Pour le SSL, utilisez Let's Encrypt au lieu du certificat auto-signé.
 
-Important : L'adresse IP de votre machine doit être renseignée dans .env (voir l'exemple présent dans le fichier).
+## Additional Notes
+- L’authentification repose sur les cookies pour éviter les attaques XSS.
+- PostgreSQL et Python n'ont pas besoin d'être installés localement, tout est géré par les conteneurs.
+- L’application est accessible depuis le réseau local sans configuration supplémentaire.
+- Dernière remarque : J’ai volontairement inclus le fichier `.env` dans le dépôt pour simplifier les tests en local, en étant conscient des risques de sécurité.
 
-Lancer les conteneurs
+## Contributing
+Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou ouvrir une issue pour toute suggestion d'amélioration.
 
-docker-compose up --build -d
+## Common Issues
+Listez ici les problèmes courants rencontrés par les utilisateurs et comment les résoudre.
 
-🌍 Accéder à l'application
-
-L'application sera automatiquement disponible sur le réseau local à l'adresse suivante :🔗 https://192.168.X.X (Remplacez 192.168.X.X par l'adresse IP de votre machine.)
-
-📌 Remarque : Le certificat SSL est auto-signé, donc votre navigateur peut afficher un avertissement. Il suffit d'accepter l'exception pour continuer.
-
-🛠️ Configuration de la base de données
-
-Si DEBUG=False dans le fichier .env, Django utilisera PostgreSQL.
-
-PostgreSQL est automatiquement configuré dans Docker.
-
-Attention : Si vous modifiez DEBUG=False, vous devez rebuild l’image Docker avec :
-
-docker-compose up --build -d
-
-🌍 Déploiement en production
-
-En production, vous pouvez utiliser l’adresse publique du VPS ou un domaine.
-
-Pour le SSL, utilisez Let's Encrypt au lieu du certificat auto-signé.
-
-📝 Notes supplémentaires
-
-L’authentification repose sur les cookies pour éviter les attaques XSS.
-
-PostgreSQL et Python n'ont pas besoin d'être installés localement, tout est géré par les conteneurs.
-
-L’application est accessible depuis le réseau local sans configuration supplémentaire.
-
-📌 Dernière remarque : J’ai volontairement inclus le fichier .env dans le dépôt pour simplifier les tests en local, en étant conscient des risques de sécurité.
+## License
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
