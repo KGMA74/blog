@@ -1,0 +1,50 @@
+# Dépendances Node.js
+frontend/node_modules/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/pnpm-error.log*
+
+# Build output
+frontend/.next/
+frontend/out/
+frontend/dist/
+
+# Fichiers d'environnement
+# frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Logs
+frontend/logs/
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# Cache
+frontend/.cache/
+frontend/.next/cache/
+frontend/coverage/
+frontend/*.cache
+
+# VS Code
+frontend/.vscode/
+
+# MacOS
+frontend/.DS_Store
+
+# Linux
+frontend/*.swp
+frontend/*.swo
+
+# Windows
+frontend/Thumbs.db
+
+# Docker
+frontend/docker-compose.override.yml
+frontend_/node_modules/@next/swc-linux-x64-gnu/next-swc.linux-x64-gnu.node
+frontend_/node_modules/@next/swc-linux-x64-musl/next-swc.linux-x64-musl.node

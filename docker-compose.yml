@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  backend:
+    image: blog_backend
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/Backend
+      - ./backend/media:/media
+    depends_on:
+      - db
+    env_file:
+      - .env
+    networks:
+      - BlogNetwork
+
+  frontend:
+    image: blog_frontend
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./frontend:/Frontend
+    depends_on:
+      - backend
+    networks:
+      - BlogNetwork
+    
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx-setup.conf:/etc/nginx/nginx.conf
+      # - ./nginx/cert.pem:/etc/nginx/cert.pem
+      # - ./nginx/key.pem:/etc/nginx/key.pem
+      - ./backend/media:/media
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - BlogNetwork
+
+  db:
+    image: postgres:latest
+    container_name: blog_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - BlogNetwork
+
+volumes:
+  pg_data:
+
+networks:
+  BlogNetwork:
+    driver: bridge
